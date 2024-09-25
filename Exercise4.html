@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Number Guessing Game</title>
+    <script src="randominteger.js"></script>
+</head>
+
+<body onload="game = startGame();">
+    <h1>Number Guessing Game</h1>
+    <p>Guess a number between 1 and 100. You have 10 turns.</p>
+
+    <input type="number" id="guessInput" min="1" max="100">
+
+    <button onclick="submitGuess()">Guess</button>
+
+    <p id="message"></p>
+
+    <script>
+        function submitGuess() {
+            const userGuess = document.getElementById("guessInput").value;
+            const message = game.guess(userGuess);
+            document.getElementById("message").textContent = message;
+            document.getElementById("guessInput").value = ''; // Reset input field
+        }
+
+        // Function to start the game
+        function startGame() {
+            let randomNumber = randomInt();
+            let guessCount = 10;
+            let previousGuesses = [];
+
+            return {
+                guess: function (userGuess) {
+                    let message = '';
+                    userGuess = parseInt(userGuess);
+                    guessCount--;
+                    previousGuesses.push(userGuess);
+
+                    if (userGuess === randomNumber) {
+                        message = `Congratulations! You guessed it right. The number was ${randomNumber}.We have reset the random number (1-100), you can continue to guess new answers or you can choose to quit.`;
+                        this.restartGame();
+                    } else if (guessCount === 0) {
+                        message = `Game Over! You've run out of turns. The number was ${randomNumber}.`;
+                        this.restartGame();
+                    } else if (userGuess < randomNumber) {
+                        message = `Too low! You have ${guessCount} turns left. Previous guesses: ${previousGuesses.join(', ')}`;
+                    } else if (userGuess > randomNumber) {
+                        message = `Too high! You have ${guessCount} turns left. Previous guesses: ${previousGuesses.join(', ')}`;
+                    }
+                    return message;
+                },
+                restartGame: function () {
+                    randomNumber = randomInt();
+                    guessCount = 10;
+                    previousGuesses = [];
+                }
+            };
+        }
+    </script>
+
+</body>
+
+</html>
